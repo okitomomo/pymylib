@@ -1,6 +1,6 @@
 from enum import Enum
 from mylib.env_loader import * 
-from distutils.util import strtobool
+from setuptools._distutils.util import strtobool
 import datetime
 
 t_delta = datetime.timedelta(hours=9)
