@@ -1,6 +1,6 @@
 from enum import Enum
-from mylib.env_loader import * 
 from setuptools._distutils.util import strtobool
+import os
 import datetime
 
 t_delta = datetime.timedelta(hours=9)
@@ -21,18 +21,12 @@ _TYPES = {
 }
 """ログ種類ごとの定義情報"""
 
-def _loadEnv():
-    """envファイルの読み込み"""
-    global el
-    el = EnvLoader()
-    for type in LogType:
-        el.load(f"ログ出力[{type.value}]", "IS_OUT_LOG_" + type.value)
-
-def _loadTypes():
+def setup_log():
     """ログ種類ごとの出力有無をenvファイルから設定"""
     global _TYPES
     for type in LogType:
-        is_out_log = strtobool(el.get("IS_OUT_LOG_" + type.value))
+        val = os.environ.get("IS_OUT_LOG_" + type.value, "FALSE").strip()
+        is_out_log = strtobool(val)
         _TYPES[type.value]["print"] = is_out_log
 
 def log(type: LogType, msg: str):
@@ -49,8 +43,3 @@ def log(type: LogType, msg: str):
     d = now.strftime('%y/%m/%d %H:%M:%S')
 
     print( f"[{d}]"+ _TYPES[type.value]["pre"] + msg, flush=True)
-
-# ログ出力使用の準備
-_loadEnv()
-_loadTypes()
-    
